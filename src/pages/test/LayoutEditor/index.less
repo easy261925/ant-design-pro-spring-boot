@@ -1,0 +1,36 @@
+@import '~react-grid-layout/css/styles.css';
+@import '~react-resizable/css/styles.css';
+
+.remove {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  z-index: 999;
+  display: none;
+  color: @primary-color;
+  cursor: pointer;
+}
+
+.react-grid-item {
+  // padding: 10px;
+  border: 1px solid #ececec;
+
+  &:hover {
+    padding: 4px;
+    border: 1px solid @primary-color;
+  }
+}
+
+.react-grid-item:hover .remove {
+  display: inline-block;
+}
+
+.react-resizable-handle {
+  right: -8px !important;
+  bottom: -8px !important;
+  visibility: hidden;
+}
+
+.react-grid-item:hover .react-resizable-handle {
+  visibility: visible;
+}
