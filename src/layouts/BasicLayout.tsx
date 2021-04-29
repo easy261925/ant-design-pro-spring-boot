@@ -23,10 +23,10 @@ const noMatch = (
   <Result
     status={403}
     title="403"
-    subTitle="Sorry, you are not authorized to access this page."
+    subTitle="暂无权限访问改页面."
     extra={
       <Button type="primary">
-        <Link to="/user/login">Go Login</Link>
+        <Link to="/user/login">前往登录页面</Link>
       </Button>
     }
   />
@@ -150,7 +150,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
             },
             ...routers,
           ]) ||
-            [],
+          [],
         ] as any
       }
       itemRender={(route, params, routes, paths) => {

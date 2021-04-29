@@ -9,7 +9,6 @@ export default {
   dev: {
     '/server/api': {
       target: 'http://localhost:7801',
-      // target: 'http://192.168.3.151:7801', // tj
       changeOrigin: true,
       pathRewrite: { '^/server/api': '/' },
     },
