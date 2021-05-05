@@ -20,3 +20,9 @@ export async function loginService(params: LoginParamsType) {
     data: params,
   });
 }
+
+export async function logoutService() {
+  return request('/server/api/login/logout', {
+    method: 'POST',
+  });
+}

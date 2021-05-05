@@ -1,20 +1,21 @@
 import { stringify } from 'querystring';
-import { history, Reducer, Effect } from 'umi';
+import type { Reducer, Effect } from 'umi';
+import { history } from 'umi';
 
-import { loginService } from '@/services/login';
+import { loginService, logoutService } from '@/services/login';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
 import { setToken, removeToken } from '@/utils/axios';
 import { message } from 'antd';
 
-export interface StateType {
+export type StateType = {
   status?: boolean;
   statusContent?: string;
   type?: string;
-  currentAuthority?: 'user' | 'guest' | 'admin';
-}
+  currentAuthority?: string[];
+};
 
-export interface LoginModelType {
+export type LoginModelType = {
   namespace: string;
   state: StateType;
   effects: {
@@ -25,7 +26,7 @@ export interface LoginModelType {
     changeLoginStatus: Reducer<StateType>;
     save: Reducer<StateType>;
   };
-}
+};
 
 const Model: LoginModelType = {
   namespace: 'login',
@@ -42,7 +43,7 @@ const Model: LoginModelType = {
         type: 'changeLoginStatus',
         payload: {
           status: success,
-          currentAuthority: data ? data.currentAuthority : [],
+          currentAuthority: success ? data.authority : [],
           type: payload.type,
           statusContent: msg,
         },
@@ -51,8 +52,9 @@ const Model: LoginModelType = {
         setToken(data.token);
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
-        message.success('🎉 🎉 🎉  登录成功！');
+        message.success('登录成功！');
         let { redirect } = params as { redirect: string };
+        console.log('redirect', redirect)
         if (redirect) {
           const redirectUrlParams = new URL(redirect);
           if (redirectUrlParams.origin === urlParams.origin) {
@@ -69,21 +71,23 @@ const Model: LoginModelType = {
       }
     },
 
-    logout() {
+    *logout(_, { call }) {
       const { redirect, token } = getPageQuery();
-      // Note: There may be security issues, please note
-      setAuthority([]);
-      removeToken();
-      if (window.location.pathname !== '/user/login' && !redirect) {
-        const redirectUrl = token ? window.location.href.split('?')[0] : window.location.href;
-        setTimeout(() => {
-          history.replace({
-            pathname: '/user/login',
-            search: stringify({
-              redirect: redirectUrl,
-            }),
-          });
-        }, 100);
+      const { success } = yield call(logoutService);
+      if (success) {
+        setAuthority([]);
+        removeToken();
+        if (window.location.pathname !== '/user/login' && !redirect) {
+          const redirectUrl = token ? window.location.href.split('?')[0] : window.location.href;
+          setTimeout(() => {
+            history.replace({
+              pathname: '/user/login',
+              search: stringify({
+                redirect: redirectUrl,
+              }),
+            });
+          }, 100);
+        }
       }
     },
   },
